@@ -1,0 +1,76 @@
+This Gem provides a way to control media players using the D-Bus Media Player
+Remote Interfacing Specification (MPRIS) version 2, whose spec can be found at
+http://www.mpris.org/2.1/spec:
+
+The Media Player Remote Interfacing Specification is a standard D-Bus interface
+which aims to provide a common programmatic API for controlling media players.
+It provides a mechanism for discovery, querying and basic playback control of
+compliant media players, as well as a tracklist interface which is used to add
+context to the active media item.
+
+At the moment, implements the org.mpris.MediaPlayer2 and 
+org.mpris.MediaPlayer2.Player interfaces. org.mpris.MediaPlayer2.TrackList and
+org.mpris.MediaPlayer2.Playlists are not implemented yet.
+
+It heavily uses the {https://github.com/sdague/ruby-dbus dbus gem}.
+
+== Installation
+
+ruby-mpris2 is not available in any gems repository yet, so you must build it
+manually:
+
+  # 1 - Clone the repository and cd into your local copy
+  git clone git://github.com/fcingolani/ruby-mpris2.git
+  cd ruby-mpris2
+  
+  # 2 - Build the gem
+  gem build mpris2.gemspec
+  
+  # 3 - Install mpris2. Will install dbus gem too if not installed yet.
+  sudo gem install mpris2-0.0.1.gem
+
+== Basic Usage
+
+This gem is extremely easy to use:
+
+  require 'mpris2'
+  require 'pp'
+
+  # Create an mpris2 object, it'll use the Session Bus by default
+  mpris2 = MPRIS2.new
+  
+  # Get a mediaplayer
+  mediaplayer = mpris2.mediaplayer
+  
+  # Output current track info
+  puts "You are currently using #{mediaplayer.identity}"
+  pp mediaplayer.metadata
+  
+  # Play the next song
+  mediaplayer.player.next
+
+  # Decrease the volume to 50%
+  mediaplayer.player.volume = 50
+  
+You will find more examples inside the "examples" directory.
+
+== Handling signals
+
+You can handle D-Bus signals registering callback using "on_" methods, and then
+running a D-Bus loop:
+
+  mpris2 = MPRIS2.new
+
+  # We register a callback for the Seeked signal.
+  mpris2.mediaplayer.player.on_seeked do | position |
+    puts "Seeked to #{position}"
+  end
+  
+  # Run the loop. This is a blocking call!
+  mpris2.run_loop
+
+  # Now try changing your track's position and see on_seeked in action.
+
+== License
+
+{include:file:LICENSE}
