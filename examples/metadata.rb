@@ -6,5 +6,7 @@ require 'mpris2'
 require 'pp'
 
 mpris2 = MPRIS2.new
-pp mpris2.mediaplayer.player.metadata
-
+mpris2.mediaplayers.each do | mediaplayer |
+  puts mediaplayer.identity + ':'
+  pp mediaplayer.player.metadata
+end
