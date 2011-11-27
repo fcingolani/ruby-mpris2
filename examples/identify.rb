@@ -4,5 +4,6 @@ $:.unshift File.dirname(__FILE__)+'/../lib'
 
 require 'mpris2'
 
-mpris = MPRIS2.new
-puts "Identity: #{mpris.mediaplayer.identity}"
+mp = MPRIS2.find_media_players.first
+
+puts "Identity: #{mp.identity}"

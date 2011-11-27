@@ -8,11 +8,12 @@ It provides a mechanism for discovery, querying and basic playback control of
 compliant media players, as well as a tracklist interface which is used to add
 context to the active media item.
 
-At the moment, implements the org.mpris.MediaPlayer2 and 
+At the moment, is under development so take in account backwards incompatible
+changes may occur. Currently implements the org.mpris.MediaPlayer2 and 
 org.mpris.MediaPlayer2.Player interfaces. org.mpris.MediaPlayer2.TrackList and
 org.mpris.MediaPlayer2.Playlists are not implemented yet.
 
-It heavily uses the {https://github.com/sdague/ruby-dbus dbus gem}.
+It heavily uses the dbus gem: https://github.com/sdague/ruby-dbus.
 
 == Installation
 
@@ -27,7 +28,7 @@ manually:
   gem build mpris2.gemspec
   
   # 3 - Install mpris2. Will install dbus gem too if not installed yet.
-  sudo gem install mpris2-0.0.1.gem
+  sudo gem install mpris2-0.0.2.gem
 
 == Basic Usage
 
@@ -36,21 +37,18 @@ This gem is extremely easy to use:
   require 'mpris2'
   require 'pp'
 
-  # Create an mpris2 object, it'll use the Session Bus by default
-  mpris2 = MPRIS2.new
-  
   # Get a mediaplayer
-  mediaplayer = mpris2.mediaplayer
+  mp = MPRIS2.find_media_players.first
   
   # Output current track info
-  puts "You are currently using #{mediaplayer.identity}"
-  pp mediaplayer.metadata
+  puts "You are currently using #{mp.identity}"
+  pp mp.metadata
   
   # Play the next song
-  mediaplayer.player.next
+  mp.next
 
   # Decrease the volume to 50%
-  mediaplayer.player.volume = 50
+  mp.volume = 0.50
   
 You will find more examples inside the "examples" directory.
 
@@ -59,18 +57,36 @@ You will find more examples inside the "examples" directory.
 You can handle D-Bus signals registering callback using "on_" methods, and then
 running a D-Bus loop:
 
-  mpris2 = MPRIS2.new
+  mp = MPRIS2.find_media_players.first
 
   # We register a callback for the Seeked signal.
-  mpris2.mediaplayer.player.on_seeked do | position |
+  mp.on_seeked do | position |
     puts "Seeked to #{position}"
   end
   
   # Run the loop. This is a blocking call!
-  mpris2.run_loop
+  mp.run_loop
 
   # Now try changing your track's position and see on_seeked in action.
 
 == License
 
-{include:file:LICENSE}
+Copyright (C) 2011 by Federico Cingolani
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.

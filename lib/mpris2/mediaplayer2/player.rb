@@ -1,5 +1,4 @@
 class MPRIS2
-
   class MediaPlayer2
   
     # Implements methods to comunicate with the org.mpris.MediaPlayer2.Player
@@ -7,27 +6,11 @@ class MPRIS2
     #
     # For more information check http://www.mpris.org/2.1/spec/Player_Node.html
   
-    class Player
-    
+    module Player
+      
       # D-Bus interface name for Player
     
-      INTERFACE_NAME = 'org.mpris.MediaPlayer2.Player'
-    
-      # Create a new Player object.
-      #
-      # @param (DBus::ProxyObject) dbus_object
-      # @raise [InterfaceNotImplementedException] If dbus_object does not
-      #   implement the org.mpris.MediaPlayer2.Player interface.
-    
-      def initialize( object )
-        object.introspect unless object.introspected
-
-        unless object.has_iface? INTERFACE_NAME
-          fail InterfaceNotImplementedException, "#{dbus_object.path} does not implement the #{INTERFACE_NAME} interface."
-        end
-
-        @interface = object[INTERFACE_NAME]
-      end
+      PLAYER_IFACE_NAME = 'org.mpris.MediaPlayer2.Player'
       
       # Skips to the next track in the track list.
       #
@@ -40,7 +23,7 @@ class MPRIS2
       # @see #can_control?
       
       def next
-        @interface.Next
+        player_iface.Next
       end
       
       # Skips to the previous track in the tracklist.
@@ -54,7 +37,7 @@ class MPRIS2
       # @see #can_control?
       
       def previous
-        @interface.Previous
+        player_iface.Previous
       end
       
       # Pauses playback.
@@ -68,7 +51,7 @@ class MPRIS2
       # @see #can_control?
       
       def pause
-        @interface.Pause
+        player_iface.Pause
       end
       
       # Pauses or resumes playback.
@@ -81,7 +64,7 @@ class MPRIS2
       # @see #can_control?
       
       def play_pause
-        @interface.PlayPause
+        player_iface.PlayPause
       end
       
       # Stops playback.
@@ -94,7 +77,7 @@ class MPRIS2
       # @see #can_control?
       
       def stop
-        @interface.Stop
+        player_iface.Stop
       end
       
       # Starts or resumes playback.
@@ -107,7 +90,7 @@ class MPRIS2
       # @see #can_control?
       
       def play
-        @interface.Play
+        player_iface.Play
       end
       
       # Seeks forward in the current track by the specified number of
@@ -124,7 +107,7 @@ class MPRIS2
       # @see #can_control?
 
       def seek( microseconds )
-        @interface.Seek microseconds
+        player_iface.Seek microseconds
       end
 
       # Sets the current track position in microseconds.
@@ -147,7 +130,7 @@ class MPRIS2
       #   already changed.
       
       def set_position( track_id, position )
-        @interface.SetPosition track_id, position
+        player_iface.SetPosition track_id, position
       end
 
       # Opens the URI given as an argument
@@ -168,7 +151,7 @@ class MPRIS2
       # @see #supported_mime_types
       
       def open_uri( uri )
-        @interface.OpenUri uri
+        player_iface.OpenUri uri
       end
       
       # Indicates that the track position has changed in a way that is
@@ -185,14 +168,14 @@ class MPRIS2
       # @yieldparam [Number] position The new position, in microseconds.
 
       def on_seeked( &block )
-        @interface.on_signal @interface.object.bus, 'Seeked', &block
+        player_iface.on_signal @object.bus, 'Seeked', &block
       end
       
       # The current playback status.
       # @return [String] May be "Playing", "Paused" or "Stopped".
       
       def playback_status
-        @interface['PlaybackStatus']
+        player_iface['PlaybackStatus']
       end
       
       # Returns the current loop / repeat status
@@ -204,7 +187,7 @@ class MPRIS2
       # @return [String] May be "None", "Track" or "Playlist".
       
       def loop_status
-        @interface['LoopStatus']
+        player_iface['LoopStatus']
       end
       
       # Sets the current loop / repeat status
@@ -216,7 +199,7 @@ class MPRIS2
       # @see #can_control?
       
       def loop_status=( status )
-        @interface['LoopStatus'] = status
+        player_iface['LoopStatus'] = status
       end
 
       # Returns the current playback rate.
@@ -230,7 +213,7 @@ class MPRIS2
       # @see #maximum_rate
       
       def rate
-        @interface['Rate']
+        player_iface['Rate']
       end
       
       # Sets the playback rate.
@@ -253,7 +236,7 @@ class MPRIS2
       # @see #pause
       
       def rate=( playback_rate )
-        @interface['Rate'] = playback_rate
+        player_iface['Rate'] = playback_rate
       end
       
       # Returns the Shuffle status
@@ -264,7 +247,7 @@ class MPRIS2
       # @return [Boolean] Shuffle status.
       
       def shuffle?
-        @interface['Shuffle']
+        player_iface['Shuffle']
       end
       
       # Sets the Shuffle status
@@ -275,7 +258,7 @@ class MPRIS2
       # @raise [DBus::Error] If not supported.
       
       def shuffle=( shuffle )
-        @interface['Shuffle'] = shuffle
+        player_iface['Shuffle'] = shuffle
       end
       
       # The metadata of the current element.
@@ -286,14 +269,14 @@ class MPRIS2
       # @return [Hash{String => Object}] The track metadata.
 
       def metadata
-        @interface['Metadata']
+        player_iface['Metadata']
       end
       
       # Returns the volume level.
       # @return [Number]
       
       def volume
-        @interface['Volume'].first
+        player_iface['Volume']
       end
       
       # Sets the volume level
@@ -306,7 +289,7 @@ class MPRIS2
       # @see #can_control?
       
       def volume=( volume )
-        @interface['Volume'] = Float(volume)
+        player_iface['Volume'] = Float(volume)
       end
       
       # Returns the current track position in microseconds, between 0 and the
@@ -317,7 +300,7 @@ class MPRIS2
       # @see #set_position
       
       def position
-        @interface['Position']
+        player_iface['Position']
       end
       
       # The minimum value which the {#rate} method can take. Clients should not
@@ -330,7 +313,7 @@ class MPRIS2
       # @see #rate
       
       def minimum_rate
-        @interface['MinimumRate']
+        player_iface['MinimumRate']
       end
       
       # The maximum value which the {#rate} method can take. Clients should not
@@ -340,7 +323,7 @@ class MPRIS2
       # @see #rate
       
       def maximum_rate
-        @interface['MaximumRate']
+        player_iface['MaximumRate']
       end
       
       # Whether the client can call the {#next} method on this interface and
@@ -355,7 +338,7 @@ class MPRIS2
       # @see #can_control?
       
       def can_go_next?
-        @interface['CanGoNext']
+        player_iface['CanGoNext']
       end
       
       # Whether the client can call the {#previous} method on this interface and
@@ -370,7 +353,7 @@ class MPRIS2
       # @see #can_control?
       
       def can_go_previous?
-        @interface['CanGoPrevious']
+        player_iface['CanGoPrevious']
       end
 
       # Whether playback can be started using {#play} or {#play_pause}.
@@ -387,7 +370,7 @@ class MPRIS2
       # @see #can_control?
       
       def can_play?
-        @interface['CanPlay']
+        player_iface['CanPlay']
       end
 
       # Whether playback can be paused using {#pause} or {#play_pause}.
@@ -404,7 +387,7 @@ class MPRIS2
       # @see #can_control?
 
       def can_pause?
-        @interface['CanPause']
+        player_iface['CanPause']
       end
 
       # Whether the client can control the playback position using {#seek} and
@@ -417,7 +400,7 @@ class MPRIS2
       # @see #can_control?
       
       def can_seek?
-        @interface['CanSeek']
+        player_iface['CanSeek']
       end
       
       # Whether the media player may be controlled over this interface.
@@ -431,11 +414,75 @@ class MPRIS2
       # @return [Boolean]
       
       def can_control?
-        @interface['CanControl']
+        player_iface['CanControl']
       end
-    
+
+      def on_playback_status_changed( &block )
+        on_property_changed 'PlaybackStatus', &block
+      end
+      
+      def on_loop_status_changed( &block )
+        on_property_changed 'LoopStatus', &block
+      end
+      
+      def on_shuffle_changed( &block )
+        on_property_changed 'Shuffle', &block
+      end
+      
+      def on_metadata_changed( &block )
+        on_property_changed 'Metadata', &block
+      end
+      
+      def on_rate_changed( &block )
+        on_property_changed 'Rate', &block
+      end
+      
+      def on_volume_changed( &block )
+        on_property_changed 'Volume', &block
+      end
+      
+      def on_position_changed( &block )
+        on_property_changed 'Position', &block
+      end
+      
+      def on_minimum_rate_changed( &block )
+        on_property_changed 'MinimumRate', &block
+      end
+      
+      def on_maximum_rate_changed( &block )
+        on_property_changed 'MaximumRate', &block
+      end
+      
+      def on_can_go_next_changed( &block )
+        on_property_changed 'CanGoNext', &block
+      end
+      
+      def on_can_go_previous_changed( &block )
+        on_property_changed 'CanGoPrevious', &block
+      end
+      
+      def on_can_play_changed( &block )
+        on_property_changed 'CanPlay', &block
+      end
+      
+      def on_can_pause_changed( &block )
+        on_property_changed 'CanPause', &block
+      end
+      
+      def on_can_seek_changed( &block )
+        on_property_changed 'CanSeek', &block
+      end
+      
+      def on_can_control_changed( &block )
+        on_property_changed 'CanControl', &block
+      end
+      
+      private
+      
+      def player_iface
+        iface PLAYER_IFACE_NAME
+      end
+
     end
-    
   end
-  
 end

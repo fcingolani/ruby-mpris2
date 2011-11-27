@@ -5,8 +5,7 @@ $:.unshift File.dirname(__FILE__)+'/../lib'
 require 'mpris2'
 require 'pp'
 
-mpris2 = MPRIS2.new
-mpris2.mediaplayers.each do | mediaplayer |
-  puts mediaplayer.identity + ':'
-  pp mediaplayer.player.metadata
+MPRIS2.find_media_players.each do | mp |
+  puts mp.identity + ':'
+  pp mp.metadata
 end
