@@ -1,10 +1,16 @@
 class MPRIS2
   class MediaPlayer2
   
-    # Implements methods to comunicate with the org.mpris.MediaPlayer2.Player
-    # interface of a D-Bus object.
+    # This module implements the methods for
+    # querying and providing basic control over what is currently playing.
     #
-    # For more information check http://www.mpris.org/2.1/spec/Player_Node.html
+    # === Example: Current track info
+    # {include:file:examples/current_track_info.rb}
+    #
+    # === Example: Play the next song
+    # {include:file:examples/play_next_song.rb}
+    #
+    # @see http://www.mpris.org/2.1/spec/Player_Node.html
   
     module Player
       
