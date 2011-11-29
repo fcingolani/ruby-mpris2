@@ -1,6 +1,34 @@
 class MPRIS2
   class MediaPlayer2
   
+    # Provides access to a short list of tracks which were recently played or
+    # will be played shortly. This is intended to provide context to the
+    # currently-playing track, rather than giving complete access to the media
+    # player's playlist.
+    #
+    # Example use cases are the list of tracks from the same album as the
+    # currently playing song or the Rhythmbox play queue.
+    #
+    # Each track in the tracklist has a unique identifier. The intention is that
+    # this uniquely identifies the track within the scope of the tracklist. In
+    # particular, if a media item (a particular music file, say) occurs twice in
+    # the track list, each occurrence should have a different identifier. If a
+    # track is removed from the middle of the playlist, it should not affect the
+    # track ids of any other tracks in the tracklist.
+    #
+    # As a result, the traditional track identifiers of URLs and position in the
+    # playlist cannot be used. Any scheme which satisfies the uniqueness
+    # requirements is valid, as clients should not make any assumptions about
+    # the value of the track id beyond the fact that it is a unique identifier.
+    #
+    # Note that the (memory and processing) burden of implementing the TrackList
+    # interface and maintaining unique track ids for the playlist can be
+    # mitigated by only exposing a subset of the playlist when it is very long
+    # (the 20 or so tracks around the currently playing track, for example).
+    # This is a recommended practice as the tracklist interface is not designed
+    # to enable browsing through a large list of tracks, but rather to provide
+    # clients with context about the currently playing track.
+    #
     # @see http://www.mpris.org/2.1/spec/TrackList_Node.html
   
     module TrackList

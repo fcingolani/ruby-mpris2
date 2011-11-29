@@ -1,5 +1,6 @@
 require 'mpris2/mediaplayer2/root'
 require 'mpris2/mediaplayer2/player'
+require 'mpris2/mediaplayer2/tracklist'
 require 'mpris2/mediaplayer2/properties'
 
 class MPRIS2
@@ -16,11 +17,25 @@ class MPRIS2
   # == org.mpris.MediaPlayer2.Player
   # Implemented by the {MediaPlayer2::Player} module
   # {include:MediaPlayer2::Player}
+  # 
+  # == org.mpris.MediaPlayer2.TrackList
+  # Implemented by the {MediaPlayer2::TrackList} module
+  # {include:MediaPlayer2::TrackList}
+  # 
+  # == org.mpris.MediaPlayer2.Playlists
+  # Implemented by the {MediaPlayer2::Playlists} module
+  # {include:MediaPlayer2::Playlists}
+  # 
+  # == org.freedesktop.DBus.Properties
+  # Implemented by the {MediaPlayer2::Properties} module
+  # {include:MediaPlayer2::Properties}
 
   class MediaPlayer2
 
     include Root
     include Player
+    include TrackList
+    include Playlists
     include Properties
     
     # The Object Path an MPRISv2 compliant player must expose

@@ -9,9 +9,11 @@ compliant media players, as well as a tracklist interface which is used to add
 context to the active media item.
 
 At the moment is under development so take in account backwards incompatible
-changes may occur. Currently implements the org.mpris.MediaPlayer2 and 
-org.mpris.MediaPlayer2.Player interfaces. org.mpris.MediaPlayer2.TrackList and
-org.mpris.MediaPlayer2.Playlists are not implemented yet.
+changes may occur. Currently implements the four MPRISv2 interfaces:
+* org.mpris.MediaPlayer2, 
+* org.mpris.MediaPlayer2.Player
+* org.mpris.MediaPlayer2.TrackList
+* org.mpris.MediaPlayer2.Playlists
 
 It heavily uses the dbus gem: https://github.com/sdague/ruby-dbus.
 
